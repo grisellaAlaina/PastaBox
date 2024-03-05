@@ -1,23 +1,28 @@
 package org.pasta.controllers;
 
+import lombok.RequiredArgsConstructor;
 import org.pasta.api.requests.PastaBoxRequest;
+import org.pasta.api.response.PasteBoxResponse;
+import org.pasta.api.response.PasteBoxUrlResponse;
+import org.pasta.services.PasteBoxService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.Collections;
 
 @RestController
+@RequiredArgsConstructor
 public class PasteBoxController {
+    private final PasteBoxService pasteBoxService;
     @GetMapping("/{hash}")
-    public String getByHash(@PathVariable String hash) {
-        return hash;
+    public PasteBoxResponse getByHash(@PathVariable String hash) {
+        return pasteBoxService.getByHash(hash);
     }
-    @GetMapping()
-    public Collection<String> getPublicPastes() {
-        return Collections.emptyList();
+    @GetMapping("/")
+    public Collection<PasteBoxResponse> getPublicPastes() {
+        return pasteBoxService.getFirstPublicPasteBox();
     }
     @PostMapping("/")
-    public String addNewPasta(@RequestBody PastaBoxRequest request) {
-        return request.getData();
+    public PasteBoxUrlResponse addNewPasta(@RequestBody PastaBoxRequest request) {
+        return pasteBoxService.create(request);
     }
 }
